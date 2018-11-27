@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html{
+            font-size: 4vw;
+        }
+        body{
+            margin: 0;
+        }
+        .card{
+            width: 100vw;
+            height: 100vh;
+            background: pink;
+            perspective: 500px;
+            overflow: hidden;
+            perspective-origin: center 580px;
+        }
+        .box{
+            width: 20rem;
+            height: 20rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            transform-style: preserve-3d;
+            transition: 1s;
+
+        }
+        .box div{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: bottom center;
+        }
+        img{
+            
+            border: none;
+            width: 100%;
+            border-radius: 2rem;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="box">
+            <div><img src="img/card1.jpg" alt=""></div>
+            <div><img src="img/card2.jpg" alt=""></div>
+            <div><img src="img/card3.jpg" alt=""></div>
+            <div><img src="img/card4.jpg" alt=""></div>
+            <div><img src="img/card5.jpg" alt=""></div>
+            <div><img src="img/card6.jpg" alt=""></div>
+        </div>
+    </div>
+    <script>
+        var cardDiv = document.querySelectorAll('.box div');
+        var positionArr = [];
+        var startpointX = 0;
+        var now = 0;
+        var rotate = 0;
+        // var startpointY = 0;
+
+        init();
+        function init(){
+            for(let i=0;i< cardDiv.length;i++){
+                cardDiv[i].style.transform = 'translateZ(-'+i*60+'px)'
+                positionArr.push(i*60)
+            }
+        }
+
+
+        document.addEventListener('touchstart',function(e){
+            startpointX = e.touches[0].clientX;
+            
+        })
+
+
+        document.addEventListener('touchmove',function(e){
+            
+            let { clientX } = e.touches[0];
+
+            rotate = (startpointX - clientX) / 5 * (-1);
+                        
+            cardDiv[now].style.transform = 'rotate(' + rotate + 'deg)'
+        })
+
+
+        document.addEventListener('touchend',function(e){
+            cardDiv[now].style.transition = '.3s';
+            if(rotate<-20){
+                cardDiv[now].style.transform = 'rotate('+Math.max(rotate,-10)+'deg) translateX(-500px)';
+            }else if(rotate > 20){
+                cardDiv[now].style.transform = 'rotate(' + Math.min(rotate, 10) + 'deg) translateX(500px)';
+            }else{
+                cardDiv[now].style.transform = 'rotate(0deg)';
+            }
+        })
+
+        function move(){
+            positionArr.unshift(positionArr.pop());
+            
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>妙味课堂：移动端滑屏交互</title>
+    <style>
+        html{
+            font-size: 4vw;
+            height: 100%;
+            overflow: hidden;
+        }
+        body{
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .header{
+            width: 100vw;
+            height: 10rem;
+            background: url(./img/title.png) no-repeat;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            background-size: 100% 100%;
+            /* display: none; */
+        }
+        .card{
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            perspective: 500px;
+        }
+        .box{
+            width: 20rem;
+            height: 20rem;
+            position: absolute;
+            left: 2rem;
+            bottom: 5rem;
+            transform-style: preserve-3d;     
+            transition: 1s;
+        }
+        .box div{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 50px;
+            text-align: center;
+            color: #fff;
+            transition: 1s;
+            transform-origin: -300px -50px; 
+        }
+        .box div img{
+            width: 100%;
+            height: 100%;
+            border-radius: 2rem;
+            box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,.6);
+        }
+    </style>
+</head>
+<body>
+    <header class="header"></header>
+    <div class="card">
+        <div class="box">
+            <div><img src="img/card1.jpg" alt=""></div>
+            <div><img src="img/card2.jpg" alt=""></div>
+            <div><img src="img/card3.jpg" alt=""></div>
+            <div><img src="img/card4.jpg" alt=""></div>
+            <div><img src="img/card5.jpg" alt=""></div>
+            <div><img src="img/card6.jpg" alt=""></div>
+            <div><img src="img/card7.jpg" alt=""></div>
+        </div>
+    </div>
+    <script>
+        var card = document.querySelectorAll('.box div');
+        var cardBox = document.querySelector('.card');
+        var header = document.querySelector('.header');
+        var positionArr = [];
+        var now = 0;
+        var off = true;
+
+        creat();
+        function creat(){
+            for(let i=0;i<card.length;i++){
+                var arr = [];
+                arr .push(i*10);
+                arr.push(i*60);
+                positionArr.push(arr);
+                card[i].style.transform = 'translateZ(-'+ i * 60  / 20+'rem) rotateZ(-'+i*10+'deg)';
+            }
+        }
+
+        header.addEventListener('touchmove',function(e){
+            e.preventDefault();
+        })
+
+        cardBox.addEventListener('touchmove',function(e){
+            e.preventDefault();
+            if (!off) { return }
+            off = false;
+            card[now].style = '';
+            card[now].style.transition = '0.3s ease-in,opacity 0.1s 0.1s';
+            card[now].style.transform = 'rotateY(-20deg) translateX(-500px)';
+
+            positionArr.unshift(positionArr[positionArr.length - 1]);
+            positionArr.pop();
+
+            setTimeout(()=>{
+                Array.from(card).forEach((item,index)=>{
+                    if(index == now){
+                        item.style.opacity = 0;
+                        return;
+                    }
+                    item.style.opacity = 1;
+                    item.style.transition = '0.3s ease-in,opacity 0.1s 0.3s'
+                    item.style.transform = 'translateZ(-' + positionArr[index][1] / 20 + 'rem) rotateZ(-' + positionArr[index][0] + 'deg)';
+                })
+                now++;
+                if(now== card.length){
+                    now = 0;
+                }
+            },100)
+            setTimeout(()=>{
+                off = true;
+            },300)
+
+        })
+    </script>
+</body>
+</html>
